@@ -16,4 +16,16 @@ public class ClientHandler extends Thread {
         this.clientId = "Anonymous" + GlobalCounter.getNumber();
     }
 
+    public void handleIncomingCommands(String cmd){
+    if (cmd.startsWith("sensorOnOff")){
+        //turn sensor on or off
+    }
+
+    if (cmd.startsWith("START")){
+        //do something
+    }
+
+    }
+
+
 }
