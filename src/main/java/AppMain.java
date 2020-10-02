@@ -22,8 +22,8 @@ public class AppMain extends Application {
         primaryStage.setTitle("Camera Car Gruppe 20");
         primaryStage.setX(50);
         primaryStage.setY(50);
-        primaryStage.setMinWidth(800);
-        primaryStage.setMinHeight(600);
+        primaryStage.setMinWidth(1000);
+        primaryStage.setMinHeight(800);
     }
 
 }
