@@ -1,3 +1,4 @@
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 
@@ -5,9 +6,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 
 public class GUI {
     private Scene scene;
@@ -28,6 +26,19 @@ public class GUI {
         this.scene.setCursor(Cursor.DEFAULT);
     }
 
+    /**
+     * Login window
+     * Username and password required to get to mainContainer
+     * @return
+     */
+    private VBox loginWindow(){
+        return new VBox();
+    }
+
+    /**
+     * Main Container
+     * @return
+     */
     private VBox mainContainer(){
         return new VBox(topBox(),bottomPane());
     }
@@ -41,8 +52,8 @@ public class GUI {
     // Video pane
     private Pane leftPane(){
         Pane pane = new Pane();
-        pane.setMinWidth(600);
-
+        pane.setMinWidth(800);
+        pane.setMinHeight(600);
         return pane;
     }
 
@@ -52,10 +63,13 @@ public class GUI {
         Button stopBtn = new Button("STOP");
         ToggleButton sensorsOnOffBtn = new ToggleButton("Sensors on/off");
 
-        vBox.getChildren().add(startBtn);
-        vBox.getChildren().add(stopBtn);
-        vBox.getChildren().add(sensorsOnOffBtn);
+        startBtn.setMaxWidth(Double.MAX_VALUE);
+        stopBtn.setMaxWidth(Double.MAX_VALUE);
+        sensorsOnOffBtn.setMaxWidth(Double.MAX_VALUE);
 
+        vBox.setSpacing(15);
+        vBox.setPadding(new Insets(30,20,30,20));
+        vBox.getChildren().addAll(startBtn,stopBtn,sensorsOnOffBtn);
         return vBox;
     }
 
