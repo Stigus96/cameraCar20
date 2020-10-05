@@ -53,6 +53,12 @@ public class TCPClient {
                     out.writeBytes(cmd);
                 }
 
+                if(cmd.contains("START")){
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    PrintWriter writer = new PrintWriter(out, true);
+                    out.writeBytes(cmd);
+                }
+
             }  catch (IOException e) {
                 System.out.println("Socket error: " + e.getMessage());
                 lastError = "" + e;
