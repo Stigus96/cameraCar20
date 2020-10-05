@@ -1,7 +1,7 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class Main {
+public class AppMain {
     //Default TCP port to use
     private static final int DEFAULT_PORT = 1300;
 
