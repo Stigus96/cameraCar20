@@ -43,27 +43,18 @@ public class TCPClient {
         return connection != null;
     }
 
-    public boolean sendCommand(String cmd) {
+    private boolean sendCommand(String cmd) {
         while (isConnectionActive()) {
             try {
 
-                DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-                PrintWriter writer = new PrintWriter(out, true);
-                out.writeBytes(cmd);
-
-                /*
-                if (cmd.contains("sensorOnOff")) {
                     DataOutputStream out = new DataOutputStream(connection.getOutputStream());
                     PrintWriter writer = new PrintWriter(out, true);
-                    out.writeBytes(cmd);
-                }
+                    writer.println(cmd);
 
-                if(cmd.contains("START")){
-                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-                    PrintWriter writer = new PrintWriter(out, true);
-                    out.writeBytes("START");
-                    System.out.println("sending start command");
-                } */
+                    System.out.println("command sent: " + cmd);
+
+                    return true;
+
 
             }  catch (IOException e) {
                 System.out.println("Socket error: " + e.getMessage());
@@ -76,6 +67,11 @@ public class TCPClient {
 
     private void onDisconnect() {
         // TODO Implement this method
+        }
+
+        public boolean sendACommand(String cmd){
+        sendCommand(cmd);
+        return true;
         }
 
 }
