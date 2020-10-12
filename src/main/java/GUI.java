@@ -9,7 +9,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class GUI {
+    private GUI_bottom gui_bottom = new GUI_bottom();
     private TCPClient tcpClient;
     private Scene scene;
 
@@ -48,7 +51,7 @@ public class GUI {
      * @return
      */
     private VBox mainContainer(){
-        return new VBox(topBox(),bottomPane());
+        return new VBox(topBox(), gui_bottom.getBottomPane());
     }
 
     private HBox topBox(){
@@ -75,7 +78,7 @@ public class GUI {
 
         vBox.setSpacing(15);
         vBox.setPadding(new Insets(30,20,30,20));
-        vBox.getChildren().addAll(startButton(), stopButton(), sensorButton());
+        vBox.getChildren().addAll(startButton(), stopButton(), sensorButton(), forward());
         return vBox;
     }
 
@@ -131,42 +134,20 @@ public class GUI {
         return sensorButton;
     }
 
+    private Button forward(){
+        Button fwd = new Button("Forward");
+        fwd.setMaxWidth(Double.MAX_VALUE);
 
-    private SplitPane bottomPane(){
-        SplitPane sp = new SplitPane();
-        sp.getItems().add(leftBottom());
-        sp.getItems().add(rightBottom());
+        fwd.setOnMousePressed(e -> {
+            try {
+                Thread.sleep(1000);
+                System.out.println("Mouse pressed");
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        });
 
-        return sp;
+        return fwd;
     }
-
-    private TabPane leftBottom(){
-        TabPane tp = new TabPane();
-
-        Tab tab1 = new Tab("Guide", new Label("Shows what you can do with the robot"));
-        Tab tab2 = new Tab("Rapport"  , new Label("Rapport skriving blir har :)"));
-        Tab tab3 = new Tab("Pictures" , new Label("Pictures of the process"));
-
-        tp.getTabs().add(tab1);
-        tp.getTabs().add(tab2);
-        tp.getTabs().add(tab3);
-
-        return tp;
-    }
-
-    private Accordion rightBottom(){
-        Accordion acc = new Accordion();
-
-        TitledPane pane1 = new TitledPane("Items" , new Label("Show all items available"));
-        TitledPane pane2 = new TitledPane("Functions"  , new Label("Show all functions available"));
-        TitledPane pane3 = new TitledPane("Producers", new Label("Siggi, Stig, Erlend"));
-
-        acc.getPanes().add(pane1);
-        acc.getPanes().add(pane2);
-        acc.getPanes().add(pane3);
-
-        return acc;
-    }
-
 
 }
