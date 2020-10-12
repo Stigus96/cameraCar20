@@ -93,7 +93,11 @@ public class GUI {
             @Override
             public void handle(ActionEvent actionEvent) {
                 System.out.println("starting car");
-                //tcpClient.sendCommand("start");
+                if (tcpClient.isConnectionActive()) {
+                    tcpClient.sendACommand("START");
+                } else {
+                    System.out.println("no connection");
+                }
             }
         });
         return startBtn;
@@ -110,7 +114,7 @@ public class GUI {
             @Override
             public void handle(ActionEvent actionEvent) {
                 System.out.println("Stopping car");
-                //tcpClient.sendCommand("start");
+                tcpClient.sendACommand("start");
             }
         });
         return stopBtn;
