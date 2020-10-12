@@ -1,3 +1,5 @@
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -8,10 +10,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class GUI {
+    private TCPClient tcpClient;
     private Scene scene;
+
+    String HOST_NAME = "127.0.0.1";
+    int PORT = 1300;
 
     public GUI(){
         setMainScene();
+        tcpClient = new TCPClient();
+        tcpClient.connect(HOST_NAME, PORT);
     }
 
     public Scene getMainScene(){
@@ -44,7 +52,7 @@ public class GUI {
     }
 
     private HBox topBox(){
-        HBox hBox = new HBox(leftPane(), rightBox());
+        HBox hBox = new HBox(leftPane(), buttonControls());
         hBox.setMinHeight(400);
         return hBox;
     }
@@ -57,21 +65,72 @@ public class GUI {
         return pane;
     }
 
-    private VBox rightBox(){
+    /**
+     * Control buttons top right in the GUI
+     * Has start button, stop button, button to toggle sensors
+     * @return
+     */
+    private VBox buttonControls(){
         VBox vBox = new VBox();
-        Button startBtn = new Button("START");
-        Button stopBtn = new Button("STOP");
-        ToggleButton sensorsOnOffBtn = new ToggleButton("Sensors on/off");
-
-        startBtn.setMaxWidth(Double.MAX_VALUE);
-        stopBtn.setMaxWidth(Double.MAX_VALUE);
-        sensorsOnOffBtn.setMaxWidth(Double.MAX_VALUE);
 
         vBox.setSpacing(15);
         vBox.setPadding(new Insets(30,20,30,20));
-        vBox.getChildren().addAll(startBtn,stopBtn,sensorsOnOffBtn);
+        vBox.getChildren().addAll(startButton(), stopButton(), sensorButton());
         return vBox;
     }
+
+    /**
+     * button to send command start to server from client
+     * @return
+     */
+    private Button startButton(){
+        Button startBtn = new Button("START");
+        startBtn.setMaxWidth(Double.MAX_VALUE);
+        startBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.println("starting car");
+                //tcpClient.sendCommand("start");
+            }
+        });
+        return startBtn;
+    }
+
+    /**
+     * button to send command stop to server
+     * @return
+     */
+    private Button stopButton(){
+        Button stopBtn = new Button("STOP");
+        stopBtn.setMaxWidth(Double.MAX_VALUE);
+        stopBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.println("Stopping car");
+                //tcpClient.sendCommand("start");
+            }
+        });
+        return stopBtn;
+    }
+
+    /**
+     * button to toggle distance sensors on and off
+     * @return
+     */
+    private ToggleButton sensorButton(){
+        ToggleButton sensorButton = new ToggleButton("Sensors on/off");
+        sensorButton.setMaxWidth(Double.MAX_VALUE);
+
+        sensorButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.println("Toggle sensors on and off");
+            }
+        });
+
+        return sensorButton;
+    }
+
 
     private SplitPane bottomPane(){
         SplitPane sp = new SplitPane();

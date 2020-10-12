@@ -3,16 +3,11 @@ import javafx.stage.Stage;
 
 public class AppMain extends Application {
     private GUI gui = new GUI();
-    private TCPClient tcpClient = new TCPClient();
-
-    String HOST_NAME = "10.22.178.184";
-    int PORT = 1300;
 
     public void start(Stage primaryStage) throws Exception {
         setStage(primaryStage);
         primaryStage.setScene(gui.getMainScene());
         primaryStage.show();
-        tcpClient.connect(HOST_NAME, PORT);
     }
 
     public static void main(String[] args) {
