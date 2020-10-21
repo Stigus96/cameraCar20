@@ -1,8 +1,12 @@
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 public class GUI_bottom extends SplitPane {
 
     private SplitPane bottomPane;
+    private TextField currentSpeed = new TextField("0");
+    private TextField currentDirection = new TextField("0");
+    private Label directionLabel = new Label("");
 
     public GUI_bottom(){
         bottomPane = bottomPane();
@@ -19,10 +23,31 @@ public class GUI_bottom extends SplitPane {
         return sp;
     }
 
+    public void setSpeed(double speed){
+        currentSpeed.setText(String.format("%.1f km/h",speed));
+    }
+
+    public void setDircetion(double direction){
+        currentDirection.setText(String.format("%.1f°",direction));
+        setDirectionLabel(direction);
+    }
+
+    private void setDirectionLabel(double direction){
+        if(direction >= 0){
+            directionLabel.setText("RIGHT");
+        } else {
+            directionLabel.setText("LEFT");
+        }
+    }
+
     private TabPane leftBottom(){
         TabPane tp = new TabPane();
 
-        Tab tab1 = new Tab("Guide", new Label("Shows what you can do with the robot"));
+        Label label1 = new Label("Speed:");
+        Label label2 = new Label("Turn");
+        VBox speedOmeter = new VBox(label1, currentSpeed, label2, currentDirection, directionLabel);
+
+        Tab tab1 = new Tab("SpeedOmeter", speedOmeter);
         Tab tab2 = new Tab("Rapport"  , new Label("Rapport skriving blir har :)"));
         Tab tab3 = new Tab("Pictures" , new Label("Pictures of the process"));
 

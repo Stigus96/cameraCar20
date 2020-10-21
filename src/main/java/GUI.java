@@ -5,9 +5,11 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -78,7 +80,7 @@ public class GUI {
 
         vBox.setSpacing(15);
         vBox.setPadding(new Insets(30,20,30,20));
-        vBox.getChildren().addAll(startButton(), stopButton(), sensorButton(), forward());
+        vBox.getChildren().addAll(startButton(), stopButton(), sensorButton(), controlPad(100));
         return vBox;
     }
 
@@ -116,6 +118,8 @@ public class GUI {
            } else {
                System.out.println("no connection");
            }
+            gui_bottom.setSpeed(0);
+            gui_bottom.setDircetion(0);
         });
         return stopBtn;
     }
@@ -140,20 +144,54 @@ public class GUI {
         return sensorButton;
     }
 
-    private Button forward(){
-        Button fwd = new Button("Forward");
-        fwd.setMaxWidth(Double.MAX_VALUE);
+    private Circle controlPad(int radius){
+        Circle circle = new Circle(radius);
 
-        fwd.setOnMousePressed(e -> {
-            try {
-                Thread.sleep(1000);
-                System.out.println("Mouse pressed");
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+        circle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                myVector(mouseEvent.getX(),mouseEvent.getY(), radius);
             }
         });
 
-        return fwd;
+        return circle;
+    }
+
+    private void myVector(double x, double y, int radius){
+        boolean toRight = true;
+        double hypotenus = Math.sqrt(Math.pow(x,2.0) + Math.pow(y,2.0));
+        double angle = Math.toDegrees(Math.asin(y/hypotenus)) + 90;
+
+        double speed = 1 - ((radius - hypotenus) / radius);
+
+        if(x <= 0){
+            angle *= -1;
+            toRight = false;
+        }
+
+        gui_bottom.setSpeed(speed);
+        gui_bottom.setDircetion(angle);
+
+        //leftOrRight(x, y, toRight, angle, speed);
+
+    }
+
+    /**
+     * only for testing
+     * @param x
+     * @param y
+     * @param toRight
+     * @param angle
+     * @param speed
+     */
+    private void leftOrRight(double x, double y, boolean toRight, double angle, double speed) {
+        System.out.printf("\nX: %.2f Y: %.2f\n",x,y);
+        System.out.printf("Speed is: %.1f\n", speed);
+        if(toRight) {
+            System.out.printf("Direction is: %.1f degrees RIGHT\n", angle);
+        } else {
+            System.out.printf("Direction is: %.1f degrees LEFT\n", angle);
+        }
     }
 
 }
