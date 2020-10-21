@@ -110,12 +110,12 @@ public class GUI {
     private Button stopButton(){
         Button stopBtn = new Button("STOP");
         stopBtn.setMaxWidth(Double.MAX_VALUE);
-        stopBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                System.out.println("Stopping car");
-                tcpClient.sendACommand("start");
-            }
+        stopBtn.setOnAction(actionEvent -> {
+           if(tcpClient.isConnectionActive()){
+               tcpClient.sendACommand("STOP");
+           } else {
+               System.out.println("no connection");
+           }
         });
         return stopBtn;
     }
@@ -127,11 +127,13 @@ public class GUI {
     private ToggleButton sensorButton(){
         ToggleButton sensorButton = new ToggleButton("Sensors on/off");
         sensorButton.setMaxWidth(Double.MAX_VALUE);
+        sensorButton.setSelected(false);
 
-        sensorButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                System.out.println("Toggle sensors on and off");
+        sensorButton.setOnAction(actionEvent -> {
+            if(sensorButton.isSelected()){
+                tcpClient.sendACommand("SENSOR_OFF");
+            } else {
+                tcpClient.sendACommand("SENSOR_ON");
             }
         });
 
