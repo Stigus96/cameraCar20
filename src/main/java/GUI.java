@@ -5,12 +5,19 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Path;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GUI {
@@ -146,6 +153,15 @@ public class GUI {
 
     private Circle controlPad(int radius){
         Circle circle = new Circle(radius);
+
+        try {
+            String path = "/Users/sigurhj/Java/cameraCar20/cameraCar20/src/main/java/hringur3.jpg";
+            FileInputStream circleDesign3 = new FileInputStream(path);
+            Image image = new Image(circleDesign3);
+            circle.setFill(new ImagePattern(image));
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
 
         circle.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
