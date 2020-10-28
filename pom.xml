@@ -21,11 +21,6 @@
             <version>11.0.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.sarxos</groupId>
-            <artifactId>webcam-capture</artifactId>
-            <version>0.3.10</version>
-        </dependency>
-        <dependency>
             <groupId>org.openpnp</groupId>
             <artifactId>opencv</artifactId>
             <version>4.3.0-1</version>
