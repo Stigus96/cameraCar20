@@ -54,6 +54,10 @@ public class ClientHandler extends Thread {
         server.removeConnectedClient((int)Thread.currentThread().getId());
     }
 
+    /**
+     * parses commands recived from the client and exectues a function if the command is supported
+     * @param cmd the command to be recived from client
+     */
     public void handleIncomingCommands(String cmd) {
         if (cmd.trim().equals("sensorOnOff")) {
             //turn sensor on or off
@@ -64,7 +68,7 @@ public class ClientHandler extends Thread {
         }
 
         if (cmd.startsWith("VECTOR")){
-            // vincoming string on form "VECTOR speed angle"
+            // incoming string on form "VECTOR speed angle"
             String [] cmdSplit = cmd.split("");
             String stringSpeed = cmdSplit[1];
             String stringAngle = cmdSplit[2];
@@ -81,6 +85,10 @@ public class ClientHandler extends Thread {
         }
     }
 
+    /**
+     * sends information back to the client
+     * @param msg message to be sent to the client
+     */
     public void send(String msg) {
         try {
             PrintWriter pw = new PrintWriter(clientSocket.getOutputStream(), true);
