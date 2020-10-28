@@ -61,10 +61,12 @@ public class ClientHandler extends Thread {
     public void handleIncomingCommands(String cmd) {
         if (cmd.trim().equals("sensorOnOff")) {
             //turn sensor on or off
+            send("sensor state changed");
         }
 
         if (cmd.trim().equals("START")) {
             System.out.println("starting stuff");
+            send("Starting car");
         }
 
         if (cmd.startsWith("VECTOR")){
@@ -75,6 +77,7 @@ public class ClientHandler extends Thread {
 
             int speed = Integer.parseInt(stringSpeed);
             int angle = Integer.parseInt(stringAngle);
+            send("vectors successfully received");
 
             //TODO send values to motor and servo controller
         }
