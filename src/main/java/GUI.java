@@ -10,6 +10,9 @@ import javafx.scene.layout.VBox;
 public class GUI {
     private Scene scene;
 
+    String HOST_NAME = "158.38.143.180";
+    int PORT = 1300;
+
     public GUI(){
         setMainScene();
     }
