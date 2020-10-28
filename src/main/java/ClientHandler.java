@@ -61,7 +61,21 @@ public class ClientHandler extends Thread {
 
         if (cmd.trim().equals("START")) {
             System.out.println("starting stuff");
-        } else {
+        }
+
+        if (cmd.startsWith("VECTOR")){
+            // vincoming string on form "VECTOR speed angle"
+            String [] cmdSplit = cmd.split("");
+            String stringSpeed = cmdSplit[1];
+            String stringAngle = cmdSplit[2];
+
+            int speed = Integer.parseInt(stringSpeed);
+            int angle = Integer.parseInt(stringAngle);
+
+            //TODO send values to motor and servo controller
+        }
+
+            else {
             //command not supported
             send("cmderr command not supported");
         }
