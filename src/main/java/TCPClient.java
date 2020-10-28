@@ -71,7 +71,38 @@ public class TCPClient {
 
         public boolean sendACommand(String cmd){
         sendCommand(cmd);
+        waitServerResponse();
         return true;
         }
+
+    /**
+     * Wait for chat server's response
+     *
+     * @return one line of text (one command) received from the server
+     */
+    private String waitServerResponse() {
+
+        try {
+            InputStream in = connection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String responseLine;
+            String serverResponse;
+
+            do{
+                responseLine = reader.readLine();
+                if (responseLine != null){
+                    System.out.println("SERVER: " + responseLine);
+                    serverResponse = responseLine;
+                    return serverResponse;
+                } else { System.out.println("no response from server");}
+            } while (responseLine != null);
+
+        }
+        catch (IOException e) {
+            System.out.println("Socket error: " + e.getMessage());
+            lastError = "" + e;
+        }
+        return null;
+    }
 
 }
