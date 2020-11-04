@@ -155,7 +155,7 @@ public class GUI {
         Circle circle = new Circle(radius);
 
         try {
-            String path = "/Users/sigurhj/Java/cameraCar20/cameraCar20/src/main/java/hringur3.jpg";
+            String path = "src/main/java/hringur3.jpg";
             FileInputStream circleDesign3 = new FileInputStream(path);
             Image image = new Image(circleDesign3);
             circle.setFill(new ImagePattern(image));
