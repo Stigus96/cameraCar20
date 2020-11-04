@@ -83,13 +83,18 @@ public class TCPClient {
     private String waitServerResponse() {
 
         try {
-            InputStream in = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            InputStream in =  connection.getInputStream();
+            //BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            byte[] data = new byte[100];
+            int count = in.read(data);
+
+
             String responseLine;
             String serverResponse;
 
+
             do{
-                responseLine = reader.readLine();
+                responseLine = new String(data);
                 if (responseLine != null){
                     System.out.println("SERVER: " + responseLine);
                     serverResponse = responseLine;
