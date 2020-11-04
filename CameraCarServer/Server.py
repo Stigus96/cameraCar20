@@ -11,7 +11,7 @@ def threaded(connection):
     while True:
         try:
             data = connection.recv(16)
-        except:
+        except TimeoutError:
             print("cannot receive data, client has probably forcibly closed connection")
             break
         if not data: break
@@ -23,19 +23,21 @@ def threaded(connection):
             print('starting stuff')
 
             connection.sendall(bytes("starting stuff", 'utf-8'))
-        if cmd == "VECTOR":
+        elif cmd == "VECTOR":
             # incoming string on form "VECTOR speed angle"
             cmdSplit = cmd.split(" ")
             speed = cmdSplit[1]
             angle = cmdSplit[2]
             connection.sendall(bytes('vectors successfully received', 'utf-8'))
-        if cmd == "SENSOR_OFF":
+        elif cmd == "SENSOR_OFF":
             # turn sensor off
             print('turning sensor off')
+            connection.sendall(bytes('sensor turned off', 'utf-8'))
 
-        if cmd == "SENSOR_ON":
+        elif cmd == "SENSOR_ON":
             # turn sensor on
             print('turning sensor on')
+            connection.sendall(bytes('sensor turned on', 'utf-8'))
 
         else:
             print('command not supported?')
