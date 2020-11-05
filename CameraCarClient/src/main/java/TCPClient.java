@@ -65,11 +65,8 @@ public class TCPClient {
 
     public boolean sendACommand(String cmd){
         sendCommand(cmd);
-        try {
             waitServerResponse();
-        } catch(NullPointerException e){
 
-        }
         return true;
     }
 
@@ -81,6 +78,7 @@ public class TCPClient {
     private String waitServerResponse() {
 
         try {
+            connection.setSoTimeout(2000);
             InputStream in =  connection.getInputStream();
             //BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             byte[] data = new byte[100];
