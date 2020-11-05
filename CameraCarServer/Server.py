@@ -3,69 +3,86 @@ import socket
 from _thread import *
 import threading
 import sys
+from ClientHandler import ClientHandler
 
 print_lock = threading.Lock()
+socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+threads = []
+connectedClients = {}
+port = 1300
+
+
+def main():
+    socket.bind(('', port))
+    print('socket binded to port', port)
+    socket.listen(10)
+
+    while True:
+        # establish connection with client
+
+        print("socket is listening")
+        conn, addr = socket.accept()
+        connectedClients[addr] = conn
+        #newthread = addr
+        #newthread.start()
+        threads.append(addr)
+
+        print('Connected to :', addr[0], ':', addr[1])
+        # lock acquired by client
+        #print_lock.acquire()
+        start_new_thread(threaded, (conn,))
+
+
+    socket.close()
 
 
 def threaded(connection):
     while True:
         try:
             data = connection.recv(16)
-        except TimeoutError:
+        except:
             print("cannot receive data, client has probably forcibly closed connection")
             break
-        if not data: break
         cmd = data.decode("utf-8")
         print('received ' + cmd)
         cmd = cmd.strip()
-
-        if cmd == "START":
-            print('starting stuff')
-
-            connection.sendall(bytes("starting stuff", 'utf-8'))
-        elif cmd == "VECTOR":
-            # incoming string on form "VECTOR speed angle"
-            cmdSplit = cmd.split(" ")
-            speed = cmdSplit[1]
-            angle = cmdSplit[2]
-            connection.sendall(bytes('vectors successfully received', 'utf-8'))
-        elif cmd == "SENSOR_OFF":
-            # turn sensor off
-            print('turning sensor off')
-            connection.sendall(bytes('sensor turned off', 'utf-8'))
-
-        elif cmd == "SENSOR_ON":
-            # turn sensor on
-            print('turning sensor on')
-            connection.sendall(bytes('sensor turned on', 'utf-8'))
-
-        else:
-            print('command not supported?')
-            connection.sendall(bytes('command not supported', 'utf-8'))
+        handleCommands(cmd, connection)
 
     connection.close()
 
 
-def main():
-    port = 1300
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('', 1300))
-    print('socket binded to port', port)
+def handleCommands(cmd, connection):
+    if cmd == "START":
+        print('starting stuff')
 
-    s.listen(5)
-    print("socket is listening")
 
-    while True:
-        # establish connection with client
-        c, addr = s.accept()
+    elif cmd == "VECTOR":
+        # incoming string on form "VECTOR speed angle"
+        cmdSplit = cmd.split(" ")
+        speed = cmdSplit[1]
+        angle = cmdSplit[2]
+        __send('vectors successfully received', connection)
 
-        # lock acquired by client
-        print_lock.acquire()
-        print('Connected to :', addr[0], ':', addr[1])
+    elif cmd == "SENSOR_OFF":
+        # turn sensor off
+        print('turning sensor off')
+        __send('sensor turned off', connection)
 
-        # Start a new thread and return its identifier
-        start_new_thread(threaded, (c,))
-    s.close()
+    elif cmd == "SENSOR_ON":
+        # turn sensor on
+        print('turning sensor on')
+        __send('sensor turned on', connection)
+
+    else:
+        print('command not supported?')
+        __send('command not supported', connection)
+
+
+def __send(msg, connection):
+    try:
+        connection.sendall(bytes(msg, 'utf-8'))
+    except TimeoutError:
+        print('failed to send msg')
 
 
 if __name__ == '__main__':
