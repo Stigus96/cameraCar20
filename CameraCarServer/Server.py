@@ -3,7 +3,7 @@ import socket
 from _thread import *
 import threading
 import sys
-from ClientHandler import ClientHandler
+
 
 print_lock = threading.Lock()
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,7 +39,7 @@ def main():
 def threaded(connection):
     while True:
         try:
-            data = connection.recv(16)
+            data = connection.recv(100)
         except:
             print("cannot receive data, client has probably forcibly closed connection")
             break
@@ -55,13 +55,14 @@ def handleCommands(cmd, connection):
     if cmd == "START":
         print('starting stuff')
 
-
-    elif cmd == "VECTOR":
+    elif cmd.startswith("VECTOR"):
         # incoming string on form "VECTOR speed angle"
         cmdSplit = cmd.split(" ")
         speed = cmdSplit[1]
         angle = cmdSplit[2]
+        print('Speed: ' + speed, 'angle: ' + angle)
         __send('vectors successfully received', connection)
+
 
     elif cmd == "SENSOR_OFF":
         # turn sensor off
