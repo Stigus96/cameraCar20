@@ -3,13 +3,11 @@ import java.io.*;
 
 public class TCPClient {
     private Socket connection;
-
     private String lastError = null;
 
-    //test
 
     public boolean connect(String host, int port) {
-        try{
+        try {
             Socket socket = new Socket(host, port);
             System.out.println("Successfully connected");
 
@@ -24,9 +22,7 @@ public class TCPClient {
     }
 
     public synchronized void disconnect() {
-        // TODO Step 4: implement this method -Done
-        // Hint: remember to check if connection is active
-        if(isConnectionActive())
+        if( isConnectionActive() )
             try {
                 connection.close();
                 onDisconnect();
@@ -44,16 +40,15 @@ public class TCPClient {
     }
 
     private boolean sendCommand(String cmd) {
-        while (isConnectionActive()) {
+        while ( isConnectionActive() ) {
             try {
+                DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                PrintWriter writer = new PrintWriter(out, true);
+                writer.println(cmd);
 
-                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-                    PrintWriter writer = new PrintWriter(out, true);
-                    writer.println(cmd);
+                System.out.println("command sent: " + cmd);
 
-                    System.out.println("command sent: " + cmd);
-
-                    return true;
+                return true;
 
 
             }  catch (IOException e) {
@@ -66,14 +61,17 @@ public class TCPClient {
     }
 
     private void onDisconnect() {
-        // TODO Implement this method
-        }
+    }
 
-        public boolean sendACommand(String cmd){
+    public boolean sendACommand(String cmd){
         sendCommand(cmd);
-        waitServerResponse();
-        return true;
+        try {
+            waitServerResponse();
+        } catch(NullPointerException e){
+
         }
+        return true;
+    }
 
     /**
      * Wait for chat server's response
@@ -88,10 +86,8 @@ public class TCPClient {
             byte[] data = new byte[100];
             int count = in.read(data);
 
-
             String responseLine;
             String serverResponse;
-
 
             do{
                 responseLine = new String(data);

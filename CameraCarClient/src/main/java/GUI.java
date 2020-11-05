@@ -166,48 +166,32 @@ public class GUI {
         circle.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                myVector(mouseEvent.getX(),mouseEvent.getY(), radius);
+                controlVector(mouseEvent.getX(),mouseEvent.getY(), radius);
             }
         });
 
         return circle;
     }
 
-    private void myVector(double x, double y, int radius){
-        boolean toRight = true;
+    private void controlVector(double x, double y, int radius){
         double hypotenus = Math.sqrt(Math.pow(x,2.0) + Math.pow(y,2.0));
         double angle = Math.toDegrees(Math.asin(y/hypotenus)) + 90;
 
         double speed = 1 - ((radius - hypotenus) / radius);
 
-        if(x <= 0){
-            angle *= -1;
-            toRight = false;
-        }
+        angle = setAngle(x, angle);
 
+        tcpClient.sendACommand("VECTOR " + speed + " " + angle);
         gui_bottom.setSpeed(speed);
         gui_bottom.setDircetion(angle);
 
-        //leftOrRight(x, y, toRight, angle, speed);
-
     }
 
-    /**
-     * only for testing
-     * @param x
-     * @param y
-     * @param toRight
-     * @param angle
-     * @param speed
-     */
-    private void leftOrRight(double x, double y, boolean toRight, double angle, double speed) {
-        System.out.printf("\nX: %.2f Y: %.2f\n",x,y);
-        System.out.printf("Speed is: %.1f\n", speed);
-        if(toRight) {
-            System.out.printf("Direction is: %.1f degrees RIGHT\n", angle);
-        } else {
-            System.out.printf("Direction is: %.1f degrees LEFT\n", angle);
+    private double setAngle(double x, double angle) {
+        if(x <= 0){
+            angle *= -1;
         }
+        return angle;
     }
 
-}
+} // END OF CLASS
