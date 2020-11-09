@@ -4,3 +4,9 @@ CameraCarServer/CameraCar20.iml/
 CameraCarClient/.idea/
 CameraCarClient/CameraCar20.iml/
 .idea/
+
+CameraCarServer/venv/
+
+CameraCarServer/__pycache__/
+
+CameraCarClient/src/main/java/TCPClient-LAPTOP-LL5Q214J.java
