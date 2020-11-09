@@ -3,6 +3,7 @@ import socket
 from _thread import *
 import threading
 import sys
+import cv2
 
 
 print_lock = threading.Lock()
@@ -16,6 +17,7 @@ def main():
     socket.bind(('', port))
     print('socket binded to port', port)
     socket.listen(10)
+
 
     while True:
         # establish connection with client
