@@ -2,7 +2,6 @@
 """
 Created on Tue Nov  3 16:37:01 2020
 """
-# Library
 # import sys
 import smbus2 as smbus
 import time
@@ -12,29 +11,29 @@ from datetime import datetime
 I2C_Slave_address = 0
 I2CBus = smbus.SMBbus(1)
 
-class motorController():
 
-    ## I2C_Slave_address =  0x44;
-    def __init__(self, slaveAddress):
-        self.I2C_Slave_address = slaveAddress
+# Convert string to array of bytes
+def __convert_string_to_bytes(src):
+    converted = []
+    for letter in src:
+        converted.append(ord(letter))
+    return converted
+
+
+# Get current time
+def __get_time():
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    return current_time
+
+
+class MotorController(object):
+    # I2C_Slave_address =  0x44;
+    def __init__(self, slave_address):
+        self.I2C_Slave_address = slave_address
     # Do nothing
 
-    # Get current time
-    def GetTime():   
-            now = datetime.now()
-            current_time = now.strftime("%H:%M:%S")
-            return current_time
-
-
-    # Convert string to array of bytes
-    def convertStringToBytes(self,src):
-        converted = []
-        for letter in src:
-            converted.append(ord(letter))
-        return converted
-
-        
-    def sendData(self,command):
+    def send_data(self, command):
         bytes_to_send = self.convertStringToBytes(command)
         try:
             print("Trying to send: " + str(command))
@@ -52,14 +51,13 @@ class motorController():
 
         # Create i2cbu
         
-    def receiveData(self):
-        dataReceived = []
+    def receive_data(self):
+        data_received = []
         try:
-            dataReceived = I2CBus.read_byte_data(I2C_Slave_address,0x00)
+            data_received = I2CBus.read_byte_data(I2C_Slave_address,0x00)
             print("Received from slave: ")
-            print(dataReceived)
-        except:
+            print(data_received)
+        except IOError:
             print(self.getTime(), "Remote I/O error")
-            time.sleep(2)
-            
-        return dataReceived
+            raise IOError
+        return data_received
