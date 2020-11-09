@@ -1,6 +1,11 @@
 import java.net.*;
 import java.io.*;
 
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoCapture;
+
 public class TCPClient {
     private Socket connection;
     private String lastError = null;
@@ -68,6 +73,23 @@ public class TCPClient {
             waitServerResponse();
 
         return true;
+    }
+
+    private Mat getFrame() {
+        Mat frame = new Mat();
+        try {
+            connection.setSoTimeout(5000);
+            InputStream in = connection.getInputStream();
+            byte[] video = new byte[64];
+            in.read(video);
+            frame = Imgcodecs.imdecode(new MatOfByte(video), Imgcodecs.IMREAD_UNCHANGED);
+            return frame;
+        }catch (IOException e){
+            System.out.println("Socket error: " + e.getMessage());
+            lastError = "" + e;
+        }
+
+        return frame;
     }
 
     /**
