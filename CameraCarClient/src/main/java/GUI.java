@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -63,17 +64,23 @@ public class GUI {
         return new VBox(topBox(), gui_bottom.getBottomPane());
     }
 
+    // Control Pane
     private HBox topBox(){
         HBox hBox = new HBox(leftPane(), buttonControls());
         hBox.setMinHeight(400);
         return hBox;
     }
 
-    // Video pane
+    // Video Pane
     private Pane leftPane(){
         Pane pane = new Pane();
         pane.setMinWidth(800);
         pane.setMinHeight(600);
+
+        FileInputStream input = new FileInputStream(tcpClient.getFrame());
+        Image image = new Image(input);
+        ImageView imageView = new ImageView(image);
+
         return pane;
     }
 

@@ -75,7 +75,7 @@ public class TCPClient {
         return true;
     }
 
-    private Mat getFrame() {
+    public Mat getFrame() {
         Mat frame = new Mat();
         try {
             connection.setSoTimeout(5000);
