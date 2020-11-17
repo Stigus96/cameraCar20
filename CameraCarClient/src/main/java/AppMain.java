@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.opencv.core.Core;
 
 public class AppMain extends Application {
     private GUI gui = new GUI();
@@ -11,6 +12,7 @@ public class AppMain extends Application {
     }
 
     public static void main(String[] args) {
+        System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
         launch(args);
     }
 
