@@ -1,10 +1,17 @@
 import java.net.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
+
+import javax.xml.bind.DatatypeConverter;
+
+import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
+import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 public class TCPClient {
     private Socket connection;
@@ -80,10 +87,20 @@ public class TCPClient {
         try {
             connection.setSoTimeout(5000);
             InputStream in = connection.getInputStream();
-            byte[] video = new byte[64];
+
+           // System.out.print(length);
+
+            byte[] video = new byte[85536];
             in.read(video);
-            frame = Imgcodecs.imdecode(new MatOfByte(video), Imgcodecs.IMREAD_UNCHANGED);
-            return frame;
+            //System.out.println(new String (video));
+            String x = new String(video);
+            x = x.trim();
+            System.out.println(x);
+
+            byte[] decodedVideo = Base64.getDecoder().decode(x);
+            //System.out.println("video string: " + new String(decodedVideo));
+            //in.read(video, 0, 64);
+            frame = Imgcodecs.imdecode(new MatOfByte(decodedVideo), Imgcodecs.IMREAD_UNCHANGED);
         }catch (IOException e){
             System.out.println("Socket error: " + e.getMessage());
             lastError = "" + e;
@@ -125,5 +142,6 @@ public class TCPClient {
         }
         return null;
     }
+
 
 }

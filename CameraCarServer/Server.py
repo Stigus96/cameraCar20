@@ -1,3 +1,5 @@
+import base64
+import pickle
 import socket
 
 from _thread import *
@@ -5,12 +7,12 @@ import threading
 import sys
 import cv2
 
-
 print_lock = threading.Lock()
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 threads = []
 connectedClients = {}
 port = 1300
+cap = cv2.VideoCapture(0)
 
 
 def main():
@@ -18,22 +20,21 @@ def main():
     print('socket binded to port', port)
     socket.listen(10)
 
-
     while True:
         # establish connection with client
 
         print("socket is listening")
         conn, addr = socket.accept()
         connectedClients[addr] = conn
-        #newthread = addr
-        #newthread.start()
+        # newthread = addr
+        # newthread.start()
         threads.append(addr)
 
         print('Connected to :', addr[0], ':', addr[1])
         # lock acquired by client
-        #print_lock.acquire()
+        # print_lock.acquire()
         start_new_thread(threaded, (conn,))
-
+        streamVideo(conn)
 
     socket.close()
 
@@ -51,6 +52,21 @@ def threaded(connection):
         handleCommands(cmd, connection)
 
     connection.close()
+
+
+def streamVideo(connection):
+    while True:
+        grabbed, frame = cap.read()
+        dim = (640, 480)
+        frame = cv2.resize(frame, dim)
+        encoded, buffer = cv2.imencode('.jpg', frame)
+        jpg_as_text = base64.b64encode(buffer)
+        try:
+            connection.sendall(jpg_as_text)
+            print(len(jpg_as_text))
+            print('// this is a divide//')
+        except TimeoutError:
+            print('failed to stream video')
 
 
 def handleCommands(cmd, connection):

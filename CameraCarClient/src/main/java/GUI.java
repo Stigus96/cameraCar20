@@ -1,3 +1,4 @@
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -7,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -14,25 +16,30 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Path;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoCapture;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GUI {
     private GUI_bottom gui_bottom = new GUI_bottom();
     private TCPClient tcpClient;
     private Scene scene;
+    private VideoCapture capture = new VideoCapture();
 
     String HOST_NAME = "127.0.0.1";
     int PORT = 1300;
 
     public GUI(){
-        setMainScene();
         tcpClient = new TCPClient();
         tcpClient.connect(HOST_NAME, PORT);
+        setMainScene();
+
     }
 
     public Scene getMainScene(){
@@ -42,7 +49,7 @@ public class GUI {
     /**
      * Set the main scene
      */
-    private void setMainScene() {
+    private void setMainScene(){
         this.scene = new Scene(mainContainer());
         this.scene.setCursor(Cursor.DEFAULT);
     }
@@ -77,10 +84,22 @@ public class GUI {
         pane.setMinWidth(800);
         pane.setMinHeight(600);
 
-        FileInputStream input = new FileInputStream(tcpClient.getFrame());
-        Image image = new Image(input);
-        ImageView imageView = new ImageView(image);
+        try {
+            Mat mat = tcpClient.getFrame();
 
+            MatOfByte byteMat = new MatOfByte();
+            Imgcodecs.imencode(".bmp", mat, byteMat);
+
+            Image image = new Image(new ByteArrayInputStream(byteMat.toArray()));
+            ImageView imageView = new ImageView(image);
+
+            pane.getChildren().add(imageView);
+            System.out.println("Worked");
+
+
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
         return pane;
     }
 
