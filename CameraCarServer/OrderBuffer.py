@@ -36,13 +36,10 @@ class OrderBuffer:
         return order
 
     def put_order(self, order):
+        successful = False
         is_order = isinstance(order, MovementOrder)
+
         if is_order and self.has_space():
             self.order_list.append(order)
-
-
-
-
-
-
-
+            successful = True
+        return successful

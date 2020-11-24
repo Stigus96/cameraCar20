@@ -19,3 +19,5 @@ class MovementOrder:
     def get_time(self):
         return self.time
 
+    def remove_time(self, time):
+        self.time = min(self.time-time, 0)

@@ -3,7 +3,8 @@
 Created on Tue Nov  3 16:37:01 2020
 """
 # import sys
-from MotorController import MotorController;
+from MotorController import MotorController
+from MovementOrder import MovementOrder
 i2c_slave_address = 0x44
 
 
@@ -16,7 +17,8 @@ class CarControl:
 
     def forward(self, speed, angle):
         try:
-            self.__send_message("s")
+            self.__send_message("a", angle)
+            self.__send_message("f", speed)
         except IOError:
             raise Exception("IO error - unable to send 'forward' command to controller")
 
