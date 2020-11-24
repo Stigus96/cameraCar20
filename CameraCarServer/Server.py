@@ -26,15 +26,17 @@ def main():
         print("socket is listening")
         conn, addr = socket.accept()
         connectedClients[addr] = conn
-        # newthread = addr
-        # newthread.start()
+        #newthread = addr
+        #newthread.start()
         threads.append(addr)
 
         print('Connected to :', addr[0], ':', addr[1])
+
         # lock acquired by client
-        # print_lock.acquire()
-        start_new_thread(threaded, (conn,))
+        #print_lock.acquire()
         streamVideo(conn)
+        #start_new_thread(threaded, (conn,))
+        #start_new_thread(streamVideo, (conn,))
 
     socket.close()
 
@@ -59,7 +61,8 @@ def streamVideo(connection):
         grabbed, frame = cap.read()
         dim = (640, 480)
         frame = cv2.resize(frame, dim)
-        encoded, buffer = cv2.imencode('.jpg', frame)
+        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 70]
+        encoded, buffer = cv2.imencode('.jpg', frame, encode_param)
         jpg_as_text = base64.b64encode(buffer)
         try:
             connection.sendall(jpg_as_text)
