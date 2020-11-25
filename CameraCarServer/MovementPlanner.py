@@ -24,23 +24,27 @@ class MovementPlanner:
     def __init__(self):
         self.currentSpeed = initial_speed
 
-    def move_vector(self, distance, direction):
-        move_time = plan_time(self, distance)
+    def move_vector(self, length, angle):
+        move_time = plan_time(self, length)
+        speed = self.currentSpeed
+        if angle > 180:
+            speed = -speed
+            angle = 360 - angle
+        order = MovementOrder(self.currentSpeed, angle, move_time)
+        return order
 
     def turn_in_place(self, angle):
         distance = base_unit / 2
         move_time = plan_time(self, distance)
         order1 = MovementOrder(-self.currentSpeed, -angle, move_time)  # Negative speed and angle in reverse
         order2 = MovementOrder(self.currentSpeed, angle, move_time)
-
-        return 2, order1, order2
+        return order1, order2
 
     def move_forward(self):
         distance = base_unit
         angle = 0
         move_time = plan_time(self, distance)
         order1 = MovementOrder(self.currentSpeed, angle, move_time)
-
         return order1
 
     def move_reverse(self):
@@ -48,7 +52,6 @@ class MovementPlanner:
         angle = 0
         move_time = plan_time(self, distance)
         order1 = MovementOrder(-self.currentSpeed, -angle, move_time)
-
         return order1
 
     def set_speed(self, new_speed):
