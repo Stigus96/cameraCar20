@@ -30,10 +30,10 @@ public class GUI {
     private GUI_bottom gui_bottom = new GUI_bottom();
     private TCPClient tcpClient;
     private Scene scene;
-    private VideoCapture capture = new VideoCapture();
+    //private VideoCapture capture = new VideoCapture();
 
-    String HOST_NAME = "127.0.0.1";
-    int PORT = 1300;
+    String  HOST_NAME   = "127.0.0.1";
+    int     PORT        = 1300;
 
     public GUI(){
         tcpClient = new TCPClient();
@@ -86,6 +86,7 @@ public class GUI {
 
         try {
             Mat mat = tcpClient.getFrame();
+           // capture.read(mat);
 
             MatOfByte byteMat = new MatOfByte();
             Imgcodecs.imencode(".bmp", mat, byteMat);
@@ -95,7 +96,6 @@ public class GUI {
 
             pane.getChildren().add(imageView);
             System.out.println("Worked");
-
 
         } catch(Exception e){
             System.out.println(e.getMessage());
