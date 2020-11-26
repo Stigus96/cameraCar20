@@ -34,21 +34,17 @@ class Server:
             speed = cmdSplit[1]
             angle = cmdSplit[2]
             print('Speed: ' + speed, 'angle: ' + angle)
-            self.__send('vectors successfully received', connection)
 
         elif cmd == "SENSOR_OFF":
             # turn sensor off
             print('turning sensor off')
-            self.__send('sensor turned off', connection)
 
         elif cmd == "SENSOR_ON":
             # turn sensor on
             print('turning sensor on')
-            self.__send('sensor turned on', connection)
 
         else:
             print('command not supported?')
-            self.__send('command not supported', connection)
 
     def __send(self, msg, connection):
         try:

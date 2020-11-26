@@ -2,6 +2,7 @@ from Server import Server
 from VideoStream import VideoStream
 import socket
 import threading
+from _thread import *
 
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connectedClients = {}
@@ -23,21 +24,29 @@ def main():
         print("socket is listening")
         conn, addr = socket.accept()
         connectedClients[addr] = conn
+        recivecommand = threading.Thread(target=server.threaded, args=(conn,))
+        threads.append(recivecommand)
+        sendvideo = threading.Thread(target=sendVideo, args=(conn, streamer.getVideo()))
+        threads.append(sendvideo)
+
         #newthread = addr
         #newthread.start()
-        threads.append(addr)
+        #threads.append(addr)
 
         print('Connected to :', addr[0], ':', addr[1])
 
         # lock acquired by client
         #print_lock.acquire()
-        jpg_as_text = streamer.getVideo()
-        sendVideo(conn, jpg_as_text)
+        #sendVideo(conn, jpg_as_text)
 
-        start_new_thread(server.threaded, (conn,))
-        #start_new_thread(streamVideo, (conn,))
+        recivecommand.start()
+        sendvideo.start()
+
+        #start_new_thread(server.threaded, (conn,))
+        #start_new_thread(sendVideo, (conn, streamer.getVideo()))
 
     socket.close()
+
 
 def sendVideo(connection, jpg_as_text):
     try:
