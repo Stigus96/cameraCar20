@@ -5,17 +5,16 @@ from MovementOrder import MovementOrder
 
 car_max_speed = 64  # Maximum speed, will limit values above to this.
 initial_speed = 32  # Speed to move at
-
-base_unit = 10;
+base_unit = 100
 
 # Movement variables:
 # TODO: Test if distance per time unit is somewhat accurate, might need a scaling function.
-distance_per_timeunit = 0.1  # expected distance to have moved per second * speed
+speed_multiplier = 0.1  # For calibrating speed from integer to actual value
 accel_time = 0.05  # Time to make up for start delay
 
 
 def plan_time(self, distance):
-    move_time = distance / (self.currentSpeed * distance_per_timeunit) + accel_time
+    move_time = distance / (self.currentSpeed * speed_multiplier) + accel_time
     return move_time
 
 
