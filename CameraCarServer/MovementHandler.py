@@ -7,6 +7,12 @@ from MovementOrder import MovementOrder
 from MovementPlanner import MovementPlanner
 from OrderBuffer import OrderBuffer
 from threading import Timer as ThreadTimer
+import time
+
+
+def millis_time():
+    time_millis = int(round(time.time() * 1000))
+    return time_millis
 
 
 class MovementHandler:
@@ -16,6 +22,7 @@ class MovementHandler:
         self.planner = MovementPlanner()
         self.buffer = OrderBuffer(max_buffer_size)
         self.time_run = 0
+        self.time_done = 0
         self.has_order = False
 
     def add_command_vector(self, value, angle):
@@ -46,20 +53,26 @@ class MovementHandler:
 
     def thread_function(self):
         while True:
-            if self.has_order is False:
-                self.__next_order()
 
-                if self.currentOrder.get_time() is not 0:
+            if self.buffer.has_order():
+                if self.has_order is False:
 
-                    time = self.currentOrder.get_time()
+                    self.__next_order()
+                    move_time = self.currentOrder.get_time()
                     speed = self.currentOrder.get_speed()
                     angle = self.currentOrder.get_angle()
 
                     self.__move(speed, angle)
                     self.has_order = True
 
-                    timer = ThreadTimer(time, self.__order_done)
-                    timer.start()
+                    self.time_done = move_time * 1000 + millis_time()
+
+                else:
+                    if millis_time() > self.time_done:
+                        self.has_order = False
+
+            else:
+                self.__move(self, 0, 0)
 
     def __move(self, speed, angle):
         if speed is 0:
@@ -75,6 +88,9 @@ class MovementHandler:
             self.buffer.put_order(order)
             success = True
         return success
+
+    def __set_default_speed(self, new_speed):
+        self.planner.set_speed(new_speed)
 
     def __next_order(self):
         if self.buffer.has_order():

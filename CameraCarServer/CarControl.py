@@ -10,9 +10,7 @@ i2c_slave_address = 0x44
 
 class CarControl:
 
-    def __init__(self):  # Do nothing
-
-        value = 1
+    def __init__(self):
         self.controller1 = MotorController(i2c_slave_address)
 
     def forward(self, speed, angle):
@@ -37,5 +35,5 @@ class CarControl:
             raise Exception("IO error - unable to send 'stop' command to controller")
 
     def __send_message(self, command, value):
-        msg = command+value
+        msg = str(command) + str(value)
         self.controller1.send_data(msg)

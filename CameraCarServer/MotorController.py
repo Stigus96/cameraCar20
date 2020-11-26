@@ -7,8 +7,6 @@ import smbus2 as smbus
 import time
 from datetime import datetime
 
-
-I2C_Slave_address = 0
 I2CBus = smbus.SMBbus(1)
 
 
@@ -38,26 +36,27 @@ class MotorController(object):
         try:
             print("Trying to send: " + str(command))
             print(bytes_to_send)
-            self.I2CBus.write_i2c_block_data(I2C_Slave_address,
-                                             0x00, bytes_to_send)
+            self.I2CBus.write_i2c_block_data(self.I2C_Slave_address, 0x00, bytes_to_send)
             # I2CBus.write_word_data(I2C_Slave_address, 0x00, 15, force=True)
             print(bytes_to_send)
             print("Success!")
 
         except IOError:
-            print(self.GetTime(), "Remote I/O error")
+            print(self.GetTime(), "Remote I/O error - failed to write i2c data")
         except TimeoutError:
-            print("Connection timed out")
+            print("i2c Connection timed out")
 
-        # Create i2cbu
-        
     def receive_data(self):
         data_received = []
         try:
-            data_received = I2CBus.read_byte_data(I2C_Slave_address,0x00)
+            data_received = I2CBus.read_byte_data(self.I2C_Slave_address, 0x00)
             print("Received from slave: ")
             print(data_received)
+
         except IOError:
-            print(self.getTime(), "Remote I/O error")
+            print(self.getTime(), "Remote I/O error - failed to get i2c data")
             raise IOError
+        except TimeoutError:
+            print("i2c Connection timed out")
+
         return data_received
