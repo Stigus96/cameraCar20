@@ -25,7 +25,7 @@ def __get_time():
     return current_time
 
 
-class MotorController(object):
+class I2cMaster(object):
     # I2C_Slave_address =  0x44;
     def __init__(self, slave_address):
         self.I2C_Slave_address = slave_address
