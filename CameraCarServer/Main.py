@@ -57,5 +57,8 @@ def sendVideo(connection, jpg_as_text):
         print('failed to stream video')
 
 
+
+
+
 if __name__ == '__main__':
     main()

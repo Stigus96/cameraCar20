@@ -7,6 +7,7 @@ car_max_speed = 64  # Maximum speed, will limit values above to this.
 car_min_speed = 10  # Minimum speed, will limit values below to this.
 initial_speed = 32  # Default speed to move at.
 base_unit = 100   # Distance to move from a given command.
+max_time = 3  # Maximum number of seconds a single command can work
 
 
 # Movement variables:
@@ -18,7 +19,7 @@ accel_time = 0.05  # Time to make up for start delay
 def plan_time(distance, speed):
     speed = abs(speed)
     move_time = distance / (speed * speed_multiplier) + accel_time
-    move_time = max(move_time, 0)
+    move_time = max(min(move_time, 3), 0)
     return move_time
 
 
