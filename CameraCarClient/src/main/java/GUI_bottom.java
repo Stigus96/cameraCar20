@@ -1,4 +1,5 @@
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class GUI_bottom extends SplitPane {
@@ -18,7 +19,7 @@ public class GUI_bottom extends SplitPane {
 
     private SplitPane bottomPane(){
         SplitPane sp = new SplitPane();
-        sp.getItems().addAll(leftBottom(), rightBottom());
+        sp.getItems().addAll(leftBottom());
 
         return sp;
     }
@@ -40,35 +41,15 @@ public class GUI_bottom extends SplitPane {
         }
     }
 
-    private TabPane leftBottom(){
-        TabPane tp = new TabPane();
+    private HBox leftBottom(){
+        HBox hBox = new HBox(10);
 
         Label label1 = new Label("Speed:");
         Label label2 = new Label("Turn");
-        VBox speedOmeter = new VBox(label1, currentSpeed, label2, currentDirection, directionLabel);
 
-        Tab tab1 = new Tab("SpeedOmeter", speedOmeter);
-        Tab tab2 = new Tab("Rapport"  , new Label("Rapport skriving blir har :)"));
-        Tab tab3 = new Tab("Pictures" , new Label("Pictures of the process"));
+        hBox.getChildren().addAll(label1, currentSpeed, label2, currentDirection);
 
-        tp.getTabs().add(tab1);
-        tp.getTabs().add(tab2);
-        tp.getTabs().add(tab3);
-
-        return tp;
+        return hBox;
     }
 
-    private Accordion rightBottom(){
-        Accordion acc = new Accordion();
-
-        TitledPane pane1 = new TitledPane("Items" , new Label("Show all items available"));
-        TitledPane pane2 = new TitledPane("Functions"  , new Label("Show all functions available"));
-        TitledPane pane3 = new TitledPane("Producers", new Label("Siggi, Stig, Erlend"));
-
-        acc.getPanes().add(pane1);
-        acc.getPanes().add(pane2);
-        acc.getPanes().add(pane3);
-
-        return acc;
-    }
 }

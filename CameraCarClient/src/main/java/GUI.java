@@ -1,45 +1,36 @@
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Path;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.videoio.VideoCapture;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GUI {
     private GUI_bottom gui_bottom = new GUI_bottom();
-    private TCPClient tcpClient;
+    private Client client;
+    private Camera camera;
     private Scene scene;
-    //private VideoCapture capture = new VideoCapture();
 
     String  HOST_NAME   = "127.0.0.1";
     int     PORT        = 1300;
 
     public GUI(){
-        tcpClient = new TCPClient();
-        tcpClient.connect(HOST_NAME, PORT);
+        client = new Client();
+        client.connect(HOST_NAME, PORT);
+        camera = new Camera(client.getConnection());
         setMainScene();
-
     }
 
     public Scene getMainScene(){
@@ -52,15 +43,6 @@ public class GUI {
     private void setMainScene(){
         this.scene = new Scene(mainContainer());
         this.scene.setCursor(Cursor.DEFAULT);
-    }
-
-    /**
-     * Login window
-     * Username and password required to get to mainContainer
-     * @return
-     */
-    private VBox loginWindow(){
-        return new VBox();
     }
 
     /**
@@ -84,22 +66,8 @@ public class GUI {
         pane.setMinWidth(800);
         pane.setMinHeight(600);
 
-        try {
-            Mat mat = tcpClient.getFrame();
-           // capture.read(mat);
+        //camera.run();
 
-            MatOfByte byteMat = new MatOfByte();
-            Imgcodecs.imencode(".bmp", mat, byteMat);
-
-            Image image = new Image(new ByteArrayInputStream(byteMat.toArray()));
-            ImageView imageView = new ImageView(image);
-
-            pane.getChildren().add(imageView);
-            System.out.println("Worked");
-
-        } catch(Exception e){
-            System.out.println(e.getMessage());
-        }
         return pane;
     }
 
@@ -112,8 +80,9 @@ public class GUI {
         VBox vBox = new VBox();
 
         vBox.setSpacing(15);
+        vBox.setAlignment(Pos.CENTER);
         vBox.setPadding(new Insets(30,20,30,20));
-        vBox.getChildren().addAll(startButton(), stopButton(), sensorButton(), controlPad(100));
+        vBox.getChildren().addAll(controlPad(100), speedSlider());
         return vBox;
     }
 
@@ -128,8 +97,8 @@ public class GUI {
             @Override
             public void handle(ActionEvent actionEvent) {
                 System.out.println("starting car");
-                if (tcpClient.isConnectionActive()) {
-                    tcpClient.sendACommand("START");
+                if (client.isConnectionActive()) {
+                    client.sendACommand("START");
                 } else {
                     System.out.println("no connection");
                 }
@@ -146,8 +115,8 @@ public class GUI {
         Button stopBtn = new Button("STOP");
         stopBtn.setMaxWidth(Double.MAX_VALUE);
         stopBtn.setOnAction(actionEvent -> {
-           if(tcpClient.isConnectionActive()){
-               tcpClient.sendACommand("STOP");
+           if(client.isConnectionActive()){
+               client.sendACommand("STOP");
            } else {
                System.out.println("no connection");
            }
@@ -168,9 +137,9 @@ public class GUI {
 
         sensorButton.setOnAction(actionEvent -> {
             if(sensorButton.isSelected()){
-                tcpClient.sendACommand("SENSOR_OFF");
+                client.sendACommand("SENSOR_OFF");
             } else {
-                tcpClient.sendACommand("SENSOR_ON");
+                client.sendACommand("SENSOR_ON");
             }
         });
 
@@ -207,7 +176,7 @@ public class GUI {
 
         angle = setAngle(x, angle);
 
-        tcpClient.sendACommand("VECTOR " + speed + " " + angle);
+        client.sendACommand("VECTOR " + speed + " " + angle);
         gui_bottom.setSpeed(speed);
         gui_bottom.setDircetion(angle);
 
@@ -218,6 +187,16 @@ public class GUI {
             angle *= -1;
         }
         return angle;
+    }
+
+
+    private Slider speedSlider(){
+        Slider slider = new Slider(0,64,0);
+        slider.setOrientation(Orientation.VERTICAL);
+        slider.setShowTickMarks(true);
+        slider.setMax(64);
+        slider.setMin(0);
+        return slider;
     }
 
 } // END OF CLASS
