@@ -1,11 +1,11 @@
 /*
-   Erlend's Notes:
+   Notes:
 
    Outputs when requesting from wire is a single char
-   - s means stop
-   - e means emergency stopped
-   - f means forward
-   - r means reverse
+   - s for stop
+   - e for emergency stopped
+   - f for forward
+   - r for reverse
 
    Inputs from i2c must be a character with order, followed by a number to control speed
    - f is forward
@@ -17,21 +17,24 @@
    - false attaches motor controller
 */
 
+#include <Servo.h>
 #include <SoftwareSerial.h>
 #include "RoboClaw.h"
 #include <Wire.h>
 #define I2C_SLAVE_ADDRESS 0x44 // i2c address for arduino
 #define address 0x80 //Roboclaw address
 
+
 bool DEBUG = false;
 volatile char controllerStatus = 'i';
 
 
 // Setup for Roboclaw
-
 SoftwareSerial serial(0, 1);
 RoboClaw roboclaw(&serial, 10000);
 
+// Setup for servo
+Servo Servo1;
 
 
 // Setup for buttons
@@ -39,11 +42,17 @@ const int STOP_PIN = 2;
 
 // motor Variables
 volatile int motorSpeed = 0;
-int maxSpeed = 64;
-int minSpeed = -64;
+const int MAXSPEED = 64;
+const int MINSPEED = -64;
+
+volatile int wheelAngle = 90; // 90 degrees is forward
+const int MAXANGLE = 150;
+const int MINANGLE = 30;
+
 
 // Global timer variables
 unsigned long lockTime = millis();
+bool locked = false;
 
 void setup()
 {
@@ -53,7 +62,7 @@ void setup()
   if (DEBUG) {
     Serial.begin(9600);
   } else {
-    // Kommuniser med roboclaw med 38400bps - basicmicro robostudio
+    // Communicate with roboclaw at 38400bps - basicmicro robostudio
     roboclaw.begin(38400);
     roboclaw.ForwardM1(address, 0);
   }
@@ -119,6 +128,11 @@ void receiveEvents(int numberOfBytes) {
     }
 
     switch (command) {
+      //order a for angle
+      case 'a':
+      case 'A':
+        int newAngle = line;
+        turnAngle(newAngle);
 
       //order f for forward
       case 'f':
@@ -167,8 +181,8 @@ void emergencyStop() {
 
 void motorSetSpeed() {
   // Force speed between min and max
-  motorSpeed = max(motorSpeed, minSpeed);
-  motorSpeed = min(motorSpeed, maxSpeed);
+  motorSpeed = max(motorSpeed, MINSPEED);
+  motorSpeed = min(motorSpeed, MAXSPEED);
 
   if (0 > motorSpeed) {
     int motorRSpeed = -motorSpeed;
@@ -193,6 +207,15 @@ void motorSetSpeed() {
   }
 }
 
+void turnAngle(int angle) {
+  // Change to adjust for 0
+  int newAngle = angle + 90;
+  newAngle = min(max(newAngle, MINANGLE), MAXANGLE);
+  wheelAngle = newAngle;
+  Servo1.write(newAngle);
+}
+
+
 // use 0 as input to use timer without setting delay
 bool lockTimer(int timeToWait) {
   bool timerDone = false;
@@ -204,15 +227,15 @@ bool lockTimer(int timeToWait) {
     timerDone = true;
   }
   else if (DEBUG) {
-    Serial.print("locked for: ");
+    Serial.print("locked for: ");+
     Serial.print(lockTime - millis());
     Serial.println(" ms");
   }
   return timerDone;
 }
 
-// Previously used code.
-/*
+
+/*Previously used
   const int STOP = 0;
   const int REVERSE = 1;
   const int FORWARD = 2;
@@ -258,5 +281,4 @@ bool lockTimer(int timeToWait) {
     }
   }
   }
-
 */
