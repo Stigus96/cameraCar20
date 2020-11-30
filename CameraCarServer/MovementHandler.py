@@ -6,7 +6,7 @@ from CarControl import CarControl
 from MovementOrder import MovementOrder
 from MovementPlanner import MovementPlanner
 from OrderBuffer import OrderBuffer
-from threading import Timer as ThreadTimer
+import threading
 import time
 
 
@@ -53,7 +53,6 @@ class MovementHandler:
 
     def thread_function(self):
         while True:
-
             if self.buffer.has_order():
                 if self.has_order is False:
 

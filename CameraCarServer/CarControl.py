@@ -3,7 +3,7 @@
 Created on Tue Nov  3 16:37:01 2020
 """
 # import sys
-from MotorController import MotorController
+from I2cMaster import I2cMaster
 from MovementOrder import MovementOrder
 i2c_slave_address = 0x44
 
@@ -11,7 +11,7 @@ i2c_slave_address = 0x44
 class CarControl:
 
     def __init__(self):
-        self.controller1 = MotorController(i2c_slave_address)
+        self.controller1 = I2cMaster(i2c_slave_address)
 
     def forward(self, speed, angle):
         try:
