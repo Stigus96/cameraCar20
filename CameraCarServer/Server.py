@@ -6,12 +6,15 @@ from _thread import *
 import threading
 import sys
 import cv2
+from multiprocessing import shared_memory
+
 
 
 class Server:
 
-    def threaded(self, connection):
+    def threaded(self, connection, result):
         while True:
+            result[0] = "empty"
             try:
                 data = connection.recv(100)
             except:
@@ -20,7 +23,15 @@ class Server:
             cmd = data.decode("utf-8")
             print('received ' + cmd)
             cmd = cmd.strip()
-            self.handleCommands(cmd, connection)
+            if cmd.startswith("VECTOR"):
+                # incoming string on form "VECTOR speed angle"
+                cmdSplit = cmd.split(" ")
+                distance = cmdSplit[1]
+                angle = cmdSplit[2]
+                print('distance: ' + distance, 'angle: ' + angle)
+                result[0] = distance + " " + angle
+
+
 
         connection.close()
 
