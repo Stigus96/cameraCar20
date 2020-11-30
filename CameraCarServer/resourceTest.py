@@ -2,22 +2,21 @@ import threading
 import time
 from multiprocessing import shared_memory
 
-memory1 = shared_memory.SharedMemory(create=True, size=1)
+memory1 = shared_memory.SharedMemory(create=True, size=5)
 test = memory1.buf
-test[0] = "50"
+test[0] = 0
 threads = []
-
-
 
 def shared_counter(shared_resource):
     while True:
         try:
-            shared_resource[0] = shared_resource[0] + 1
+            print(len(shared_resource))
+            shared_resource[0] = shared_resource[0] + 10
             print("new value is", shared_resource[0])
 
         except:
             print("failed writing for some reason")
-        time.sleep(3)
+        time.sleep(1)
 
 
 def shared_printer(shared_resource):
@@ -26,12 +25,11 @@ def shared_printer(shared_resource):
             print(shared_resource[0])
         except:
             print("failed reading for some reason")
-        time.sleep(1)
+        time.sleep(0.4)
 
 
 def main():
     count = 0
-
     test1 = threading.Thread(target=shared_counter, args=(test,))
     test2 = threading.Thread(target=shared_printer, args=(test,))
     test1.start()
@@ -42,8 +40,8 @@ def main():
 
     while True:
         # do nothing
-        # count = count + 1
-        time.sleep(0.1)
+        count = count + 1
+        # time.sleep(0.1)
 
 
 if __name__ == '__main__':

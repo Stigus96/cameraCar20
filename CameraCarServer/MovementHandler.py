@@ -1,12 +1,10 @@
-# TODO Create table of requested commands
-# TODO make time handling
-# TODO multithread this function with semaphore
-
+from multiprocessing import shared_memory
 from CarControl import CarControl
 from MovementOrder import MovementOrder
 from MovementPlanner import MovementPlanner
 from OrderBuffer import OrderBuffer
 import threading
+
 import time
 
 
@@ -51,8 +49,12 @@ class MovementHandler:
         status += " more seconds"
         return status
 
-    def thread_function(self):
+    def threaded(self, shared_resource, atomic_lock):
         while True:
+            #  Gets command if there is any written in the shared resource
+            with atomic_lock:
+                self.__get_command(shared_resource)
+
             if self.buffer.has_order():
                 if self.has_order is False:
 
@@ -64,14 +66,19 @@ class MovementHandler:
                     self.__move(speed, angle)
                     self.has_order = True
 
-                    self.time_done = move_time * 1000 + millis_time()
-
                 else:
                     if millis_time() > self.time_done:
                         self.has_order = False
 
             else:
-                self.__move(self, 0, 0)
+                self.__move(0, 0)
+
+    def __get_command(self, shared_resource):
+        if shared_resource[0] is not 0:
+            value = shared_resource[1]
+            angle = int(shared_resource[2] - shared_resource[3])
+            self.add_command_vector(value, angle)
+            shared_resource[0] = 0
 
     def __move(self, speed, angle):
         if speed is 0:
