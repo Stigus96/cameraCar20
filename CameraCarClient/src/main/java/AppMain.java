@@ -12,7 +12,7 @@ public class AppMain extends Application {
     }
 
     public static void main(String[] args) {
-        //System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
+        System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
         launch(args);
     }
 

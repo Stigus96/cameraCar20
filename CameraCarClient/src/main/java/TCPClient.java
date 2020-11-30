@@ -13,9 +13,10 @@ import javax.xml.bind.DatatypeConverter;
 import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
-public class Client {
+public class TCPClient {
     private Socket connection;
     private String lastError = null;
+
 
     public boolean connect(String host, int port) {
         try {
@@ -30,10 +31,6 @@ public class Client {
             return false;
         }
         return true;
-    }
-
-    public synchronized Socket getConnection(){
-        return connection;
     }
 
     public synchronized void disconnect() {
@@ -65,6 +62,7 @@ public class Client {
 
                 return true;
 
+
             }  catch (IOException e) {
                 System.out.println("Socket error: " + e.getMessage());
                 lastError = "" + e;
@@ -79,6 +77,71 @@ public class Client {
 
     public boolean sendACommand(String cmd){
         sendCommand(cmd);
+            waitServerResponse();
+
         return true;
     }
+
+    public Mat getFrame() {
+        Mat frame = new Mat();
+        try {
+            connection.setSoTimeout(5000);
+            InputStream in = connection.getInputStream();
+
+           // System.out.print(length);
+
+            byte[] video = new byte[85536];
+            in.read(video);
+            //System.out.println(new String (video));
+            String x = new String(video);
+            x = x.trim();
+            System.out.println(x);
+
+            byte[] decodedVideo = Base64.getDecoder().decode(x);
+            //System.out.println("video string: " + new String(decodedVideo));
+            //in.read(video, 0, 64);
+            frame = Imgcodecs.imdecode(new MatOfByte(decodedVideo), Imgcodecs.IMREAD_UNCHANGED);
+        }catch (IOException e){
+            System.out.println("Socket error: " + e.getMessage());
+            lastError = "" + e;
+        }
+
+        return frame;
+    }
+
+    /**
+     * Wait for chat server's response
+     *
+     * @return one line of text (one command) received from the server
+     */
+    private String waitServerResponse() {
+
+        try {
+            connection.setSoTimeout(2000);
+            InputStream in =  connection.getInputStream();
+            //BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            byte[] data = new byte[100];
+            int count = in.read(data);
+
+            String responseLine;
+            String serverResponse;
+
+            do{
+                responseLine = new String(data);
+                if (responseLine != null){
+                    System.out.println("SERVER: " + responseLine);
+                    serverResponse = responseLine;
+                    return serverResponse;
+                } else { System.out.println("no response from server");}
+            } while (responseLine != null);
+
+        }
+        catch (IOException e) {
+            System.out.println("Socket error: " + e.getMessage());
+            lastError = "" + e;
+        }
+        return null;
+    }
+
+
 }
