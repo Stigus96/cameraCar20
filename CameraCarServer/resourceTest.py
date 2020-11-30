@@ -1,5 +1,8 @@
 import threading
 import time
+import timeit
+from MovementHandler import MovementHandler
+
 from multiprocessing import shared_memory
 
 memory1 = shared_memory.SharedMemory(create=True, size=5)
@@ -18,6 +21,9 @@ def shared_counter(shared_resource):
             print("failed writing for some reason")
         time.sleep(1)
 
+def test_runtime():
+    handler = MovementHandler
+    timeit.timeit(MovementHandler.add_command_vector(), number=1)
 
 def shared_printer(shared_resource):
     while True:
