@@ -3,12 +3,15 @@ from VideoStream import VideoStream
 import socket
 import threading
 from _thread import *
+from multiprocessing import shared_memory
 
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connectedClients = {}
 port = 1300
 threads = []
 print_lock = threading.Lock()
+memorybuffer = shared_memory.SharedMemory(create=True, size=1)
+memory = memorybuffer.buf
 
 
 def main():
@@ -18,13 +21,17 @@ def main():
     streamer = VideoStream()
     server = Server()
 
+
+
+
     while True:
         # establish connection with client
 
         print("socket is listening")
         conn, addr = socket.accept()
         connectedClients[addr] = conn
-        recivecommand = threading.Thread(target=server.threaded, args=(conn,))
+
+        recivecommand = threading.Thread(target=server.threaded, args=(conn,memory))
         threads.append(recivecommand)
         sendvideo = threading.Thread(target=sendVideo, args=(conn, streamer.getVideo()))
         threads.append(sendvideo)
@@ -39,9 +46,13 @@ def main():
         #print_lock.acquire()
         #sendVideo(conn, jpg_as_text)
 
+
+
+
         recivecommand.start()
         sendvideo.start()
 
+        print(memory[0])
         #start_new_thread(server.threaded, (conn,))
         #start_new_thread(sendVideo, (conn, streamer.getVideo()))
 
